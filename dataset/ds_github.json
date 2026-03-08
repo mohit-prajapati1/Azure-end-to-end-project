@@ -1,0 +1,31 @@
+{
+	"name": "ds_github",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_github",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"source_file": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": {
+					"value": "mohit-prajapati1/Azure-end-to-end-project/refs/heads/main/@{dataset().source_file}",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

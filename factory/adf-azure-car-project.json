@@ -1,0 +1,9 @@
+{
+	"name": "adf-azure-car-project",
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "7f0071eb-4443-422c-b86e-c89f950d2366",
+		"tenantId": "1338893c-0755-4e35-8107-4b487fd074bc"
+	}
+}

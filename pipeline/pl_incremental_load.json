@@ -1,0 +1,174 @@
+{
+	"name": "pl_incremental_load",
+	"properties": {
+		"activities": [
+			{
+				"name": "start_date",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select last_load as start_date from water_table",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_db_azure",
+						"type": "DatasetReference",
+						"parameters": {
+							"Table_name": "water_table"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "current_date",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select Max(Date_ID) as end_date from source_car",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_db_azure",
+						"type": "DatasetReference",
+						"parameters": {
+							"Table_name": "source_car"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "incremental_data_load",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "start_date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "current_date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select * from source_car where Date_ID > '@{activity('start_date').output.value[0].start_date}' and Date_ID<='@{activity('current_date').output.value[0].end_date}'",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_db_azure",
+						"type": "DatasetReference",
+						"parameters": {
+							"Table_name": "source_car"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_incremental_data_load_adls",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Stored procedure for updating start_date",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "incremental_data_load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[Updatewatermarktable]",
+					"storedProcedureParameters": {
+						"lastload": {
+							"value": {
+								"value": "@activity('current_date').output.value[0].end_date",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_sqldb",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-03-06T11:30:38Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
