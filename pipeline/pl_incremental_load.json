@@ -32,7 +32,7 @@
 				}
 			},
 			{
-				"name": "end_date",
+				"name": "current_date",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -71,7 +71,7 @@
 						]
 					},
 					{
-						"activity": "end_date",
+						"activity": "current_date",
 						"dependencyConditions": [
 							"Succeeded"
 						]
