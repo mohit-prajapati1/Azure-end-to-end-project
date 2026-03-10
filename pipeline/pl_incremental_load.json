@@ -22,7 +22,7 @@
 						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "ds_db_azure",
+						"referenceName": "ds_db_azure_2nd_copy",
 						"type": "DatasetReference",
 						"parameters": {
 							"Table_name": "water_table"
@@ -51,7 +51,7 @@
 						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "ds_db_azure",
+						"referenceName": "ds_db_azure_2nd_copy",
 						"type": "DatasetReference",
 						"parameters": {
 							"Table_name": "source_car"
@@ -116,7 +116,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "ds_db_azure",
+						"referenceName": "ds_db_azure_2nd_copy",
 						"type": "DatasetReference",
 						"parameters": {
 							"Table_name": "source_car"

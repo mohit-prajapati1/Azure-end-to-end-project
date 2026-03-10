@@ -1,5 +1,5 @@
 {
-	"name": "pipeline_source_prep",
+	"name": "pipeline_source_prep_GIT_To_DB",
 	"properties": {
 		"activities": [
 			{
@@ -28,7 +28,8 @@
 					"sink": {
 						"type": "AzureSqlSink",
 						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
 					},
 					"enableStaging": false,
 					"translator": {
@@ -51,7 +52,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "ds_sink_sqldb",
+						"referenceName": "ds_sink_sqldb_first_copy",
 						"type": "DatasetReference"
 					}
 				]

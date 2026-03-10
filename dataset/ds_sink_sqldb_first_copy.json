@@ -1,5 +1,5 @@
 {
-	"name": "ds_sink_sqldb",
+	"name": "ds_sink_sqldb_first_copy",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ls_sqldb",

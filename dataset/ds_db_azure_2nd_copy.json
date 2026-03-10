@@ -1,5 +1,5 @@
 {
-	"name": "ds_db_azure",
+	"name": "ds_db_azure_2nd_copy",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ls_sqldb",
